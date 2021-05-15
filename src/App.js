@@ -91,19 +91,7 @@ function App() {
     if (stopSearch)
       fetchMoviesHandler()
   }
-  const callMe = useCallback(() => {
-    const repeater = setTimeout(() => {
-      console.log('In searchLoop');
-      if (stopSearch) {
-        callMe()
-      }
-    }, 1000);
-
-    return (() => {
-      clearTimeout(repeater)
-    })
-  }, [stopSearch])
-
+  
   const apiCallsLimit = 100;
   const waitingPeriod = (5 * 60) / apiCallsLimit * limitWeeks * 1000
 
