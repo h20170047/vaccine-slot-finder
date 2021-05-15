@@ -28,7 +28,7 @@ function SearchVaccine(props) {
         </select>
       </div>
       <div className={classes.control}>
-        <label>Number of days to be checked for, in advance from today:</label>
+        <label>Number of weeks to be checked for, in advance from today:</label>
         <input type='number' onChange={limitChangeHandler}></input>
       </div>
       <button>{(props.title && "Search in Loop") ||

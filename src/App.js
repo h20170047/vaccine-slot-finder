@@ -11,7 +11,7 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [limitDays, setLimitDays] = useState(2)
+  const [limitWeeks, setlimitWeeks] = useState(2)
   const [isPlaying, setIsPlaying] = useState(false)
   const [stopSearch, setStopSearch] = useState(true)
   const [selectedDistrict, setSelectedDistrict] = useState({
@@ -22,7 +22,7 @@ function App() {
 
   function GetFormattedDate(inp) {
     var todayTime = new Date();
-    todayTime.setDate(todayTime.getDate() + inp);
+    todayTime.setDate(todayTime.getDate() + (inp*7));
     var month = (todayTime.getMonth() + 1);
     var day = (todayTime.getDate());
     var year = (todayTime.getFullYear());
@@ -36,7 +36,7 @@ function App() {
       try {
         const transformedMovies = []
         var currentCenter = {}
-        for (var currentCount = 0; currentCount < limitDays; currentCount++) {
+        for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
           let considerdynDate = (GetFormattedDate(currentCount))
           const API = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=${selectedDistrict.district_id}+&date=${considerdynDate}`
           const response = await fetch(API);
@@ -74,7 +74,7 @@ function App() {
         clearTimeout(identifier)
       })
     }, waitingPeriod)
-  }, [stopSearch, limitDays]);
+  }, [stopSearch, limitWeeks]);
 
   const districtSelectionHandler = (selectedDistrict) => {
     var selectedDistrictInstance = {}
@@ -105,10 +105,10 @@ function App() {
   }, [stopSearch])
 
   const apiCallsLimit = 100;
-  const waitingPeriod = (5 * 60) / apiCallsLimit * limitDays * 1000
+  const waitingPeriod = (5 * 60) / apiCallsLimit * limitWeeks * 1000
 
   const limitChangeHandler = ((newLimit) => {
-    setLimitDays(newLimit)
+    setlimitWeeks(newLimit)
   })
 
   let content = <p>Found no vaccines.</p>;
