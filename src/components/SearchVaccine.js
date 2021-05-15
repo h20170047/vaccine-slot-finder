@@ -20,21 +20,26 @@ function SearchVaccine(props) {
     props.onLimitChange(event.target.value)
   }
 
+  const refreshPageHandler = () => {
+    window.location.reload();
+  }
+
   return (
     <form onSubmit={submitHandler}>
       <div className={classes.control}>
         <label htmlFor='title'>District:</label>
-        <select id="myList" onChange={districtSelectionHandler} value={props.selectedDistrict} >
+        <select disabled={disableSearch} id="myList" onChange={districtSelectionHandler} value={props.selectedDistrict} >
           {props.districts.map(district =>
             <option value={district.district_name} key={district.key}> {district.district_name} </option>)}
         </select>
       </div>
       <div className={classes.control}>
         <label>Number of weeks to be checked for, in advance from today:</label>
-        <input type='number' min="1" max="5" defaultValue="2" onChange={limitChangeHandler}></input>
+        <input disabled={disableSearch} type='number' min="1" max="5" defaultValue="2" onChange={limitChangeHandler}></input>
       </div>
       <button disabled={disableSearch}>{(props.title && "Search in Loop") ||
         (!props.title && "Searching...")}</button>
+      <button onClick={refreshPageHandler} className="refreshButton">Try a new search!</button>
     </form>
   );
 }
