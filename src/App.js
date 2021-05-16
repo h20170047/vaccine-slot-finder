@@ -8,10 +8,11 @@ import SearchVaccine from './components/SearchVaccine';
 import './App.css';
 
 function App() {
-  const [movies, setMovies] = useState([]);
+  const [vaccines, setVaccines] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [limitDays, setLimitDays] = useState(2)
+  const [limitWeeks, setlimitWeeks] = useState(2)
+  const [contactNo, setContactNo] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
   const [stopSearch, setStopSearch] = useState(true)
   const [selectedDistrict, setSelectedDistrict] = useState({
@@ -19,24 +20,44 @@ function App() {
     "district_name": "Malappuram",
     "key": 302
   })
-
+  
+    const apiCallsLimit = 100;
+    const waitingPeriod = (5 * 60) / apiCallsLimit * limitWeeks * 1000
+  
   function GetFormattedDate(inp) {
     var todayTime = new Date();
-    todayTime.setDate(todayTime.getDate() + inp);
+    todayTime.setDate(todayTime.getDate() + (inp * 7));
     var month = (todayTime.getMonth() + 1);
     var day = (todayTime.getDate());
     var year = (todayTime.getFullYear());
     return day + "-" + month + "-" + year;
   }
 
-  const fetchMoviesHandler = useCallback(async () => {
+  const sendSMS = async (contact) => {
+    var OTPRequestBody = {
+      mobile: contact
+    }
+    const endpoint = 'https://cdn-api.co-vin.in/api/v2/auth/public/generateOTP';
+    try{
+      await fetch(endpoint, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(OTPRequestBody)
+      })
+    }catch(error){
+    }
+  }
+
+  const fetchVaccinesHandler = useCallback(async (checker) => {
     setError(null);
     const identifier = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const transformedMovies = []
+        const transformedVaccines = []
         var currentCenter = {}
-        for (var currentCount = 0; currentCount < limitDays; currentCount++) {
+        for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
           let considerdynDate = (GetFormattedDate(currentCount))
           const API = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=${selectedDistrict.district_id}+&date=${considerdynDate}`
           const response = await fetch(API);
@@ -45,36 +66,40 @@ function App() {
           }
 
           const data = await response.json();
-
           for (var key = 0; key < data.centers.length; key++) {
-            currentCenter =
-            {
-              id: 'CenterID: ' + data.centers[key].center_id,
-              openingText: 'Location: ' + data.centers[key].address,
-              title: 'Age_limit: ' + data.centers[key].sessions[0].min_age_limit + ', Availability: ' + data.centers[key].sessions[0].available_capacity,
-              releaseDate: 'Date: ' + data.centers[key].sessions[0].date,
-              available_capacity: data.centers[key].sessions[0].available_capacity
-            }
-            if (currentCenter.available_capacity > 0) {
-              transformedMovies.push(currentCenter)
+            for (var diffSession = 0; diffSession < data.centers[key].sessions.length; diffSession++) {
+              currentCenter =
+              {
+                centerID: 'CenterID: ' + data.centers[key].center_id,
+                location: 'Location: ' + data.centers[key].address,
+                title: 'Age_limit: ' + data.centers[key].sessions[diffSession].min_age_limit + ', Availability: ' + data.centers[key].sessions[diffSession].available_capacity,
+                vaccinationDate: 'Date: ' + data.centers[key].sessions[diffSession].date,
+                available_capacity: data.centers[key].sessions[diffSession].available_capacity,
+                min_age_limit: data.centers[key].sessions[diffSession].min_age_limit
+              }
+              if (currentCenter.available_capacity > 0) {
+                transformedVaccines.push(currentCenter)
+              }
             }
           }
-          setMovies(transformedMovies);
-          (transformedMovies.length > 0) ? setIsPlaying(true) : setIsPlaying(false)
-          if (isPlaying) {
-            console.log("Sound is started as ", transformedMovies);
+          setVaccines(transformedVaccines);
+          (transformedVaccines.length > 0) ? setIsPlaying((prevVal)=>true) : setIsPlaying((prevVal)=>false)
+          if (transformedVaccines.length > 0) {
+            if(!checker && contactNo.length===10){
+              sendSMS(contactNo)
+            }
           }
         }
       } catch (error) {
         setError(error.message);
       }
       setIsLoading(false);
-      fetchMoviesHandler()
+      fetchVaccinesHandler(true)
       return (() => {
         clearTimeout(identifier)
       })
     }, waitingPeriod)
-  }, [stopSearch, limitDays]);
+  }, [limitWeeks, contactNo, selectedDistrict, waitingPeriod]);
 
   const districtSelectionHandler = (selectedDistrict) => {
     var selectedDistrictInstance = {}
@@ -89,32 +114,23 @@ function App() {
       return !previousState
     })
     if (stopSearch)
-      fetchMoviesHandler()
+      fetchVaccinesHandler()
   }
-  const callMe = useCallback(() => {
-    const repeater = setTimeout(() => {
-      console.log('In searchLoop');
-      if (stopSearch) {
-        callMe()
-      }
-    }, 1000);
-
-    return (() => {
-      clearTimeout(repeater)
-    })
-  }, [stopSearch])
-
-  const apiCallsLimit = 100;
-  const waitingPeriod = (5 * 60) / apiCallsLimit * limitDays * 1000
 
   const limitChangeHandler = ((newLimit) => {
-    setLimitDays(newLimit)
+    setlimitWeeks(newLimit)
   })
 
-  let content = <p>Found no vaccines.</p>;
+  const contactNumberChangeHandler = ((newNumber) => {
+    if (!isNaN(newNumber)) {
+      setContactNo(newNumber)
+    }
+  })
 
-  if (movies.length > 0) {
-    content = <VaccineList movies={movies} />;
+  let content = <p>No vaccination slot found yet!</p>;
+
+  if (vaccines.length > 0) {
+    content = <VaccineList vaccines={vaccines} />;
   }
 
   if (error) {
@@ -134,13 +150,15 @@ function App() {
           title={stopSearch}
           onSwitchSearchCriterion={swtichSearchCriterionHandler}
           onLimitChange={limitChangeHandler}
+          onNumberChange={contactNumberChangeHandler}
+          contactNo={contactNo}
         />
       </section>
-        <Sound
-          url={Hello}
-          playStatus={
-            isPlaying ? Sound.status.PLAYING : Sound.status.STOPPED}
-          loop={true} />
+      <Sound
+        url={Hello}
+        playStatus={
+          isPlaying ? Sound.status.PLAYING : Sound.status.STOPPED}
+        loop={true} />
       <section>{content}</section>
     </React.Fragment>
   );

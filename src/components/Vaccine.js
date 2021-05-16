@@ -6,8 +6,8 @@ const Vaccine = (props) => {
   return (
     <li className={classes.vaccine}>
       <h2>{props.title}</h2>
-      <h3>{props.releaseDate}</h3>
-      <p>{props.openingText}</p>
+      <h3>{props.vaccinationDate}</h3>
+      <p>{props.location}</p>
     </li>
   );
 };
