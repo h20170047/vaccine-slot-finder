@@ -6,12 +6,12 @@ import classes from './VaccineList.module.css';
 const VaccineList = (props) => {
   return (
     <ul className={classes['vaccines-list']}>
-      {props.movies.map((movie) => (
+      {props.vaccines.map((vaccine) => (
         <Vaccine
-          key={movie.id}
-          title={movie.title}
-          releaseDate={movie.releaseDate}
-          openingText={movie.openingText}
+          key={vaccine.centerID}
+          title={vaccine.title}
+          vaccinationDate={vaccine.vaccinationDate}
+          location={vaccine.location}
         />
       ))}
     </ul>

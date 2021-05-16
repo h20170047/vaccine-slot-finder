@@ -8,7 +8,7 @@ import SearchVaccine from './components/SearchVaccine';
 import './App.css';
 
 function App() {
-  const [movies, setMovies] = useState([]);
+  const [vaccines, setVaccines] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [limitWeeks, setlimitWeeks] = useState(2)
@@ -50,12 +50,12 @@ function App() {
     }
   }
 
-  const fetchMoviesHandler = useCallback(async (checker) => {
+  const fetchVaccinesHandler = useCallback(async (checker) => {
     setError(null);
     const identifier = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const transformedMovies = []
+        const transformedVaccines = []
         var currentCenter = {}
         for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
           let considerdynDate = (GetFormattedDate(currentCount))
@@ -70,21 +70,21 @@ function App() {
             for (var diffSession = 0; diffSession < data.centers[key].sessions.length; diffSession++) {
               currentCenter =
               {
-                id: 'CenterID: ' + data.centers[key].center_id,
-                openingText: 'Location: ' + data.centers[key].address,
+                centerID: 'CenterID: ' + data.centers[key].center_id,
+                location: 'Location: ' + data.centers[key].address,
                 title: 'Age_limit: ' + data.centers[key].sessions[diffSession].min_age_limit + ', Availability: ' + data.centers[key].sessions[diffSession].available_capacity,
-                releaseDate: 'Date: ' + data.centers[key].sessions[diffSession].date,
+                vaccinationDate: 'Date: ' + data.centers[key].sessions[diffSession].date,
                 available_capacity: data.centers[key].sessions[diffSession].available_capacity,
                 min_age_limit: data.centers[key].sessions[diffSession].min_age_limit
               }
               if (currentCenter.available_capacity > 0) {
-                transformedMovies.push(currentCenter)
+                transformedVaccines.push(currentCenter)
               }
             }
           }
-          setMovies(transformedMovies);
-          (transformedMovies.length > 0) ? setIsPlaying((prevVal)=>true) : setIsPlaying((prevVal)=>false)
-          if (transformedMovies.length > 0) {
+          setVaccines(transformedVaccines);
+          (transformedVaccines.length > 0) ? setIsPlaying((prevVal)=>true) : setIsPlaying((prevVal)=>false)
+          if (transformedVaccines.length > 0) {
             if(!checker && contactNo.length===10){
               sendSMS(contactNo)
             }
@@ -94,7 +94,7 @@ function App() {
         setError(error.message);
       }
       setIsLoading(false);
-      fetchMoviesHandler(true)
+      fetchVaccinesHandler(true)
       return (() => {
         clearTimeout(identifier)
       })
@@ -114,7 +114,7 @@ function App() {
       return !previousState
     })
     if (stopSearch)
-      fetchMoviesHandler()
+      fetchVaccinesHandler()
   }
 
   const limitChangeHandler = ((newLimit) => {
@@ -129,8 +129,8 @@ function App() {
 
   let content = <p>No vaccination slot found yet!</p>;
 
-  if (movies.length > 0) {
-    content = <VaccineList movies={movies} />;
+  if (vaccines.length > 0) {
+    content = <VaccineList vaccines={vaccines} />;
   }
 
   if (error) {
