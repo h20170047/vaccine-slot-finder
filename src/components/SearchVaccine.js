@@ -20,6 +20,10 @@ function SearchVaccine(props) {
     props.onLimitChange(event.target.value)
   }
 
+  const onNumberChange=(event)=>{
+    props.onNumberChange(event.target.value)
+  }
+
   const refreshPageHandler = () => {
     window.location.reload();
   }
@@ -36,6 +40,8 @@ function SearchVaccine(props) {
       <div className={classes.control}>
         <label>Number of weeks to be checked for, in advance from today:</label>
         <input disabled={disableSearch} type='number' min="1" max="5" defaultValue="2" onChange={limitChangeHandler}></input>
+        <label>Contact number(without +91) for SMS alert</label>
+        <input disabled={disableSearch} value={props.contactNo} type='text'  onChange={onNumberChange} ></input>
       </div>
       <button disabled={disableSearch}>{(props.title && "Search in Loop") ||
         (!props.title && "Searching...")}</button>
