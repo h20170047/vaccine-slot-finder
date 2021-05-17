@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Sound from 'react-sound'
 import Hello from '../src/sounds/Hello.m4a'
 import districts from './resources/districts'
