@@ -34,20 +34,24 @@ function App() {
     return day + "-" + month + "-" + year;
   }
 
-  const sendSMS = async (contact) => {
+  const sendSMS = async () => {
     var OTPRequestBody = {
-      mobile: contact
+      mobile: contactNo
     }
     const endpoint = 'https://cdn-api.co-vin.in/api/v2/auth/public/generateOTP';
     try {
-      await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(OTPRequestBody)
       })
+      if (!response.ok) {
+        throw new Error('OTP was already sent!')
+      }
     } catch (error) {
+      console.log(error);
     }
   }
 
@@ -55,23 +59,24 @@ function App() {
     setError(null);
     const identifier = setTimeout(async () => {
       setIsLoading(true);
+      var transformedVaccines = []
       try {
         for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
           let considerdynDate = (GetFormattedDate(currentCount))
           const API = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=${selectedDistrict.district_id}+&date=${considerdynDate}`
           const response = await fetch(API);
           if (!response.ok) {
-            throw new Error('Something went wrong!');
+            throw new Error('Retrying in ',waitingPeriod/1000,' seconds...');
           }
 
-          const transformedVaccines = []
-          var currentCenter = {}
-          const data = await response.json();
+          // const data = await response.json();
+          const data= dummyData
           var dose1 = 0
           var dose2 = 0
           for (var key = 0; key < data.centers.length; key++) {
             const centerData = data.centers[key]
-            for (var diffSession = 0; diffSession < data.centers[key].sessions.length; diffSession++) {
+            for (var diffSession = 0; diffSession < centerData.sessions.length; diffSession++) {
+              var currentCenter = {}
               const sessionData = centerData.sessions[diffSession]
               dose1 = sessionData.available_capacity_dose1
               dose2 = sessionData.available_capacity_dose2
@@ -81,7 +86,7 @@ function App() {
                 location: 'Location: ' + centerData.address,
                 name: centerData.name,
                 address: centerData.address,
-                fee_type: 'Fee: '+centerData.fee_type,
+                fee_type: 'Fee: ' + centerData.fee_type,
                 ageLimit: 'Age_limit: ' + sessionData.min_age_limit,
                 available_capacity_dose1: (dose1 > 0 ? ('Dose1:' + dose1) : ''),
                 available_capacity_dose2: (dose2 > 0 ? ('Dose2:' + dose2) : ''),
@@ -97,10 +102,10 @@ function App() {
           }
           setVaccines(transformedVaccines);
           (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
-          if (transformedVaccines.length > 0) {
-            if (!checker && contactNo.length === 10) {
-              sendSMS(contactNo)
-            }
+        }
+        if (transformedVaccines.length > 0) {
+          if (!checker && contactNo.length === 10) {
+            sendSMS()
           }
         }
       } catch (error) {
