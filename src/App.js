@@ -69,8 +69,7 @@ function App() {
             throw new Error('Retrying in ',waitingPeriod/1000,' seconds...');
           }
 
-          // const data = await response.json();
-          const data= dummyData
+          const data = await response.json();
           var dose1 = 0
           var dose2 = 0
           for (var key = 0; key < data.centers.length; key++) {
