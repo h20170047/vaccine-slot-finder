@@ -77,3 +77,8 @@ typings/
 
 
 node_modules/
+build/*
+.github/*
+.firebaserc
+firebase.json
+.firebase/*
