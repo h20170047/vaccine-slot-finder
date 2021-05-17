@@ -13,8 +13,14 @@
   color: #f7e702;
 }
 
-.vaccine h3 {
+.vaccine dose {
   color: #eccf77;
   margin: 0;
   font-size: 1rem;
+  word-spacing: 20px;
+}
+
+
+.vaccine yellow {
+  color: #eccf77;
 }

@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Sound from 'react-sound'
 import Hello from '../src/sounds/Hello.m4a'
 import districts from './resources/districts'
+import dummyData from './resources/dummyData'
 
 import VaccineList from './components/VaccineList';
 import SearchVaccine from './components/SearchVaccine';
@@ -20,10 +21,10 @@ function App() {
     "district_name": "Malappuram",
     "key": 302
   })
-  
-    const apiCallsLimit = 100;
-    const waitingPeriod = (5 * 60) / apiCallsLimit * limitWeeks * 1000
-  
+
+  const apiCallsLimit = 100;
+  const waitingPeriod = (5 * 60) / apiCallsLimit * limitWeeks * 1000
+
   function GetFormattedDate(inp) {
     var todayTime = new Date();
     todayTime.setDate(todayTime.getDate() + (inp * 7));
@@ -38,15 +39,15 @@ function App() {
       mobile: contact
     }
     const endpoint = 'https://cdn-api.co-vin.in/api/v2/auth/public/generateOTP';
-    try{
+    try {
       await fetch(endpoint, {
-        method: 'POST', 
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(OTPRequestBody)
       })
-    }catch(error){
+    } catch (error) {
     }
   }
 
@@ -55,8 +56,6 @@ function App() {
     const identifier = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const transformedVaccines = []
-        var currentCenter = {}
         for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
           let considerdynDate = (GetFormattedDate(currentCount))
           const API = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=${selectedDistrict.district_id}+&date=${considerdynDate}`
@@ -65,17 +64,31 @@ function App() {
             throw new Error('Something went wrong!');
           }
 
+          const transformedVaccines = []
+          var currentCenter = {}
           const data = await response.json();
+          var dose1 = 0
+          var dose2 = 0
           for (var key = 0; key < data.centers.length; key++) {
+            const centerData = data.centers[key]
             for (var diffSession = 0; diffSession < data.centers[key].sessions.length; diffSession++) {
+              const sessionData = centerData.sessions[diffSession]
+              dose1 = sessionData.available_capacity_dose1
+              dose2 = sessionData.available_capacity_dose2
               currentCenter =
               {
-                centerID: 'CenterID: ' + data.centers[key].center_id,
-                location: 'Location: ' + data.centers[key].address,
-                title: 'Age_limit: ' + data.centers[key].sessions[diffSession].min_age_limit + ', Availability: ' + data.centers[key].sessions[diffSession].available_capacity,
-                vaccinationDate: 'Date: ' + data.centers[key].sessions[diffSession].date,
-                available_capacity: data.centers[key].sessions[diffSession].available_capacity,
-                min_age_limit: data.centers[key].sessions[diffSession].min_age_limit
+                centerID: 'CenterID: ' + centerData.center_id,
+                location: 'Location: ' + centerData.address,
+                name: centerData.name,
+                address: centerData.address,
+                fee_type: 'Fee: '+centerData.fee_type,
+                ageLimit: 'Age_limit: ' + sessionData.min_age_limit,
+                available_capacity_dose1: (dose1 > 0 ? ('Dose1:' + dose1) : ''),
+                available_capacity_dose2: (dose2 > 0 ? ('Dose2:' + dose2) : ''),
+                vaccinationDate: 'Date: ' + centerData.sessions[diffSession].date,
+                available_capacityText: 'Availability: ' + sessionData.available_capacity,
+                available_capacity: sessionData.available_capacity,
+                min_age_limit: sessionData.min_age_limit
               }
               if (currentCenter.available_capacity > 0) {
                 transformedVaccines.push(currentCenter)
@@ -83,9 +96,9 @@ function App() {
             }
           }
           setVaccines(transformedVaccines);
-          (transformedVaccines.length > 0) ? setIsPlaying((prevVal)=>true) : setIsPlaying((prevVal)=>false)
+          (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
           if (transformedVaccines.length > 0) {
-            if(!checker && contactNo.length===10){
+            if (!checker && contactNo.length === 10) {
               sendSMS(contactNo)
             }
           }
@@ -100,6 +113,7 @@ function App() {
       })
     }, waitingPeriod)
   }, [limitWeeks, contactNo, selectedDistrict, waitingPeriod]);
+
 
   const districtSelectionHandler = (selectedDistrict) => {
     var selectedDistrictInstance = {}
