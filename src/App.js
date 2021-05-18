@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sound from 'react-sound'
 import Hello from '../src/sounds/Hello.m4a'
 import districts from './resources/districts'
@@ -10,7 +10,6 @@ import './App.css';
 
 function App() {
   const [vaccines, setVaccines] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [limitWeeks, setlimitWeeks] = useState(2)
   const [contactNo, setContactNo] = useState('')
@@ -132,7 +131,7 @@ function App() {
             }
           }
         }
-        if (vaccines.length != transformedVaccines) {
+        if (vaccines.length !== transformedVaccines.length) {
           setVaccines(transformedVaccines);
         }
         (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
@@ -187,10 +186,6 @@ function App() {
 
   if (error) {
     content = <p>{error}</p>;
-  }
-
-  if (isLoading) {
-    content = <p>Loading...</p>;
   }
 
   return (
