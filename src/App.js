@@ -80,7 +80,6 @@ function App() {
 
   const fetchVaccinesHandler = async () => {
     setError(null);
-    setIsLoading(true);
     var transformedVaccines = []
     try {
       for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
@@ -125,7 +124,7 @@ function App() {
                 }
               } else {
                 if (doseAvailabilityChecker(doseCode, currentCenter, '3')) {
-                  if (minAgeCode === '3' || minAgeCode === JSON.stringify(currentCenter.min_age_limit) ) {
+                  if (minAgeCode === '3' || minAgeCode === JSON.stringify(currentCenter.min_age_limit)) {
                     transformedVaccines.push(currentCenter)
                   }
                 }
@@ -133,13 +132,14 @@ function App() {
             }
           }
         }
-        setVaccines(transformedVaccines);
+        if (vaccines.length != transformedVaccines) {
+          setVaccines(transformedVaccines);
+        }
         (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
       }
     } catch (error) {
       setError(error.message);
     }
-    setIsLoading(false);
     if (!smsSent && transformedVaccines.length > 0 && contactNo.length === 10) {
       sendSMS()
     }
