@@ -78,7 +78,6 @@ function App() {
 
 
   const fetchVaccinesHandler = async () => {
-    setError(null);
     var transformedVaccines = []
     try {
       for (var currentCount = 0; currentCount < limitWeeks; currentCount++) {
@@ -132,6 +131,7 @@ function App() {
           }
         }
         if (vaccines.length !== transformedVaccines.length) {
+          setError(null);
           setVaccines(transformedVaccines);
         }
         (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
@@ -182,6 +182,8 @@ function App() {
 
   if (vaccines.length > 0) {
     content = <VaccineList vaccines={vaccines} />;
+  } else if (vaccines.length === 0) {
+    content = <p>No vaccination slot found yet!</p>;
   }
 
   if (error) {
