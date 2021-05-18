@@ -327,7 +327,7 @@ const dummyData ={
                 {
                     "session_id": "371dae2a-090b-4ca9-994b-1de0f7efad11",
                     "date": "16-05-2021",
-                    "available_capacity": 0,
+                    "available_capacity": 10,
                     "min_age_limit": 45,
                     "vaccine": "COVAXIN",
                     "slots": [
@@ -336,7 +336,7 @@ const dummyData ={
                         "03:00PM-04:00PM",
                         "04:00PM-06:00PM"
                     ],
-                    "available_capacity_dose1": 0,
+                    "available_capacity_dose1": 10,
                     "available_capacity_dose2": 0
                 }
             ]
@@ -358,7 +358,7 @@ const dummyData ={
                 {
                     "session_id": "9bc1d45f-c71e-44c2-b339-b2667e00f516",
                     "date": "16-05-2021",
-                    "available_capacity": 12,
+                    "available_capacity": 2,
                     "min_age_limit": 45,
                     "vaccine": "COVISHIELD",
                     "slots": [
@@ -367,7 +367,7 @@ const dummyData ={
                         "11:00AM-12:00PM",
                         "12:00PM-02:00PM"
                     ],
-                    "available_capacity_dose1": 10,
+                    "available_capacity_dose1": 0,
                     "available_capacity_dose2": 2
                 }
             ]
