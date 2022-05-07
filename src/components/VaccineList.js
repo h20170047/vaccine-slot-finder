@@ -8,8 +8,9 @@ const VaccineList = (props) => {
     <ul className={classes['vaccines-list']}>
       {props.vaccines.map((vaccine) => (
         <Vaccine
-          key={vaccine.centerID}
+          key={vaccine.centerID+" "+vaccine.vaccinationDate+" "+vaccine.ageLimit+" "+vaccine.vaccine}
           ageLimit={vaccine.ageLimit}
+          vaccine= {vaccine.vaccine}
           available_capacityText={vaccine.available_capacityText}
           available_capacity_dose1={vaccine.available_capacity_dose1}
           available_capacity_dose2={vaccine.available_capacity_dose2}

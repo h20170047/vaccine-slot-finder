@@ -103,6 +103,7 @@ function App() {
               centerID: 'CenterID: ' + centerData.center_id,
               location: 'Location: ' + centerData.address,
               name: centerData.name,
+              vaccine: 'Vaccine: '+ sessionData.vaccine,
               address: centerData.address,
               fee_type: 'Fee: ' + centerData.fee_type,
               ageLimit: 'Age_limit: ' + sessionData.min_age_limit,
