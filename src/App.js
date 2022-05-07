@@ -91,6 +91,7 @@ function App() {
         const data = await response.json();
         var dose1 = 0
         var dose2 = 0
+        var dose3 = 0
         for (var key = 0; key < data.centers.length; key++) {
           const centerData = data.centers[key]
           for (var diffSession = 0; diffSession < centerData.sessions.length; diffSession++) {
@@ -98,6 +99,7 @@ function App() {
             const sessionData = centerData.sessions[diffSession]
             dose1 = sessionData.available_capacity_dose1
             dose2 = sessionData.available_capacity_dose2
+            dose3 = sessionData.available_capacity_dose3
             currentCenter =
             {
               centerID: 'CenterID: ' + centerData.center_id,
@@ -106,11 +108,11 @@ function App() {
               vaccine: 'Vaccine: '+ sessionData.vaccine,
               address: centerData.address,
               fee_type: 'Fee: ' + centerData.fee_type,
-              ageLimit: 'Age_limit: ' + sessionData.min_age_limit,
+              ageLimit: 'Min Age: ' + sessionData.min_age_limit,
               available_capacity_dose1: (dose1 > 0 ? ('Dose1:' + dose1) : ''),
               available_capacity_dose2: (dose2 > 0 ? ('Dose2:' + dose2) : ''),
+              available_capacity_dose3: (dose3 > 0 ? ('Dose3:' + dose3) : ''),
               vaccinationDate: 'Date: ' + centerData.sessions[diffSession].date,
-              available_capacityText: 'Availability: ' + sessionData.available_capacity,
               available_capacity: sessionData.available_capacity,
               min_age_limit: sessionData.min_age_limit,
               dose1_availability: dose1,

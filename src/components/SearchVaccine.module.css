@@ -28,3 +28,15 @@
   outline: none;
   border-color: #230052;
 }
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+
+.inputbox{
+  size: 4;
+  max-width: 2;
+}

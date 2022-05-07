@@ -11,9 +11,9 @@ const VaccineList = (props) => {
           key={vaccine.centerID+" "+vaccine.vaccinationDate+" "+vaccine.ageLimit+" "+vaccine.vaccine}
           ageLimit={vaccine.ageLimit}
           vaccine= {vaccine.vaccine}
-          available_capacityText={vaccine.available_capacityText}
           available_capacity_dose1={vaccine.available_capacity_dose1}
           available_capacity_dose2={vaccine.available_capacity_dose2}
+          available_capacity_dose3={vaccine.available_capacity_dose3}
           vaccinationDate={vaccine.vaccinationDate}
           location={vaccine.location}
           name={vaccine.name}

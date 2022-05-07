@@ -8,8 +8,7 @@ const Vaccine = (props) => {
       <yellow>{props.name} <br/> {props.address} <br/>{props.fee_type}<br/></yellow>
       <blue>{props.vaccine}</blue>
       <p>{props.ageLimit}</p>
-      <yellow>{props.available_capacityText}<br/></yellow>
-      <dose>{props.available_capacity_dose1} {props.available_capacity_dose2} </dose>
+      <dose>{props.available_capacity_dose1} {props.available_capacity_dose2} {props.available_capacity_dose3} </dose>
       <h3>{props.vaccinationDate}</h3>
     </li>
   );
