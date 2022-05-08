@@ -57,9 +57,10 @@ function SearchVaccine(props) {
           </select></label>
           <label>Age{'  '}
           <select  id="ageList" onChange={ageSelectionHandler} value={props.minAgeCode} >
-              <option value="18" key="18"> 18+ </option>
-              <option value="45" key="45"> 45+ </option>
-              <option value="3" key="3"> All </option>
+              <option value="12" key="12"> 12+ </option>
+              <option value="15" key="15"> 15+ </option>
+              <option value="18" key="18" > 18+</option>
+              <option value="99" key="99"> All </option>
           </select>
           </label>
         </div>

@@ -17,7 +17,7 @@ function App() {
   const [smsSent, setSmsSent] = useState(true)
   const [stopSearch, setStopSearch] = useState(true)
   const [doseCode, setDoseCode] = useState('3')
-  const [minAgeCode, setMinAgeCode] = useState('3')
+  const [minAgeCode, setMinAgeCode] = useState('18')
   const [selectedDistrict, setSelectedDistrict] = useState({
     "district_id": 302,
     "district_name": "Malappuram",
