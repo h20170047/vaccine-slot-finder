@@ -53,7 +53,8 @@ function SearchVaccine(props) {
           <select  id="doseList" onChange={doseSelectionHandler} value={props.doseCode} >
               <option value="1" key="1"> Dose 1 </option>
               <option value="2" key="2"> Dose 2 </option>
-              <option value="3" key="3"> Both </option>
+              <option value="3" key="3"> Dose 3 </option>
+              <option value="99" key="99"> All </option>
           </select></label>
           <label>Age{'  '}
           <select  id="ageList" onChange={ageSelectionHandler} value={props.minAgeCode} >

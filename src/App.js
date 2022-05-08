@@ -116,16 +116,17 @@ function App() {
               available_capacity: sessionData.available_capacity,
               min_age_limit: sessionData.min_age_limit,
               dose1_availability: dose1,
-              dose2_availability: dose2
+              dose2_availability: dose2,
+              dose3_availability: dose3
             }
             if (currentCenter.available_capacity > 0) {
-              if (doseCode === '3') {
-                if (minAgeCode === '3' || minAgeCode === JSON.stringify(currentCenter.min_age_limit)) {
+              if (doseCode === '99') {
+                if (minAgeCode === '99' || minAgeCode === JSON.stringify(currentCenter.min_age_limit)) {
                   transformedVaccines.push(currentCenter)
                 }
               } else {
-                if (doseAvailabilityChecker(doseCode, currentCenter, '3')) {
-                  if (minAgeCode === '3' || minAgeCode === JSON.stringify(currentCenter.min_age_limit)) {
+                if (doseAvailabilityChecker(doseCode, currentCenter, '99')) {
+                  if (minAgeCode === '99' || minAgeCode === JSON.stringify(currentCenter.min_age_limit)) {
                     transformedVaccines.push(currentCenter)
                   }
                 }
@@ -133,15 +134,15 @@ function App() {
             }
           }
         }
-        if (vaccines.length !== transformedVaccines.length) {
-          setError(null);
-          setVaccines(transformedVaccines);
-        }
-        (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
       }
     } catch (error) {
       setError(error.message);
     }
+    if (vaccines.length !== transformedVaccines.length) {
+      setError(null);
+      setVaccines(transformedVaccines);
+    }
+    (transformedVaccines.length > 0) ? setIsPlaying((prevVal) => true) : setIsPlaying((prevVal) => false)
     if (!smsSent && transformedVaccines.length > 0 && contactNo.length === 10) {
       sendSMS()
     }
@@ -149,7 +150,7 @@ function App() {
 
   const doseAvailabilityChecker = (doseSelected, inpObject, passKey) => {
     if (doseSelected === passKey || (doseSelected === '1' && inpObject.dose1_availability > 0) ||
-      (doseSelected === '2' && inpObject.dose2_availability > 0)) {
+      (doseSelected === '2' && inpObject.dose2_availability > 0) || (doseSelected==='3' && inpObject.dose3_availability>0)) {
       return true
     }
     return false
